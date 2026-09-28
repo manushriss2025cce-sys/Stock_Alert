@@ -29,6 +29,7 @@ public class ProductService {
     }
 
     public Product updateProduct(Long id, Product product) {
+
         Product existingProduct = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
