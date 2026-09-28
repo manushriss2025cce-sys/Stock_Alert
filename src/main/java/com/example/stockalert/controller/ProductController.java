@@ -29,6 +29,7 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+
         return productService.getProductById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -38,12 +39,15 @@ public class ProductController {
     public Product updateProduct(
             @PathVariable Long id,
             @RequestBody Product product) {
+
         return productService.updateProduct(id, product);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+
         productService.deleteProduct(id);
+
         return ResponseEntity.noContent().build();
     }
 }
