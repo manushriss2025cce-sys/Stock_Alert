@@ -1,0 +1,3235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>StockAlert | Inventory Management</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        button,
+        input,
+        select {
+            font-family: inherit;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 245px;
+            background: #111827;
+            color: white;
+            padding: 25px 18px;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding: 0 8px;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: #2563eb;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 21px;
+        }
+
+        .logo h1 {
+            font-size: 20px;
+        }
+
+        .logo small {
+            color: #9ca3af;
+        }
+
+        .nav-title {
+            font-size: 10px;
+            color: #6b7280;
+            margin: 0 10px 10px;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            color: #d1d5db;
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: #1f2937;
+            color: white;
+        }
+
+        /* MAIN */
+
+        .main {
+            margin-left: 245px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 75px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 0 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topbar h2 {
+            font-size: 22px;
+        }
+
+        .topbar p {
+            color: #6b7280;
+            font-size: 13px;
+            margin-top: 3px;
+        }
+
+        .online {
+            background: #ecfdf5;
+            color: #047857;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .content {
+            padding: 30px 35px;
+        }
+
+        /* MESSAGE */
+
+        .message {
+            display: none;
+            padding: 13px 18px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .success {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .error {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        /* STAT CARDS */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-card p {
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        .stat-card h3 {
+            font-size: 28px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .blue {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .green {
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        .orange {
+            background: #fff7ed;
+            color: #ea580c;
+        }
+
+        .purple {
+            background: #f5f3ff;
+            color: #7c3aed;
+        }
+
+        /* CARDS */
+
+        .card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .card-subtitle {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* FORMS */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #4b5563;
+        }
+
+        input,
+        select {
+            height: 42px;
+            padding: 0 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            outline: none;
+            font-size: 13px;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+        }
+
+        /* BUTTONS */
+
+        .button-row {
+            margin-top: 18px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 7px;
+            padding: 10px 17px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            opacity: .88;
+        }
+
+        .primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .success-btn {
+            background: #059669;
+            color: white;
+        }
+
+        .warning {
+            background: #d97706;
+            color: white;
+        }
+
+        .danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .dark {
+            background: #374151;
+            color: white;
+        }
+
+        .light {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        /* TABLE */
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8fafc;
+            color: #6b7280;
+            font-size: 11px;
+            text-transform: uppercase;
+            padding: 13px;
+            text-align: left;
+        }
+
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        tr:hover td {
+            background: #fafafa;
+        }
+
+        /* BADGES */
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .badge-in {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-out {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-open {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-fulfilled {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-low {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-normal {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        /* STOCK */
+
+        .stock-box {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .stock-box p {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .stock-number {
+            font-size: 42px;
+            font-weight: bold;
+            color: #2563eb;
+            margin: 8px 0;
+        }
+
+        /* INVENTORY VALUE */
+
+        .inventory-value {
+            background: linear-gradient(
+                    135deg,
+                    #2563eb,
+                    #1d4ed8
+            );
+            color: white;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .inventory-value p {
+            opacity: .8;
+            font-size: 13px;
+        }
+
+        .inventory-value h2 {
+            font-size: 30px;
+            margin-top: 8px;
+        }
+
+        /* SEARCH */
+
+        .search {
+            width: 230px;
+        }
+
+        /* EMPTY */
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #9ca3af;
+        }
+
+        /* EDIT MODAL */
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            width: 500px;
+            max-width: 90%;
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .close {
+            border: none;
+            background: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width:1100px) {
+
+            .stats {
+                grid-template-columns: repeat(2,1fr);
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width:750px) {
+
+            .sidebar {
+                width: 70px;
+                padding: 20px 10px;
+            }
+
+            .logo h1,
+            .logo small,
+            .nav-title,
+            .nav-text {
+                display: none;
+            }
+
+            .logo {
+                justify-content: center;
+            }
+
+            .nav-item {
+                justify-content: center;
+            }
+
+            .main {
+                margin-left: 70px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width:500px) {
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .online {
+                display: none;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ==========================================
+     SIDEBAR
+=========================================== -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            S
+        </div>
+
+        <div>
+
+            <h1>StockAlert</h1>
+
+            <small>
+                Inventory System
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <div class="nav-title">
+        MAIN MENU
+    </div>
+
+
+    <div class="nav-item active"
+         onclick="goTo('dashboard')">
+
+        <span>⌂</span>
+
+        <span class="nav-text">
+            Dashboard
+        </span>
+
+    </div>
+
+
+    <div class="nav-item"
+         onclick="goTo('products')">
+
+        <span>▣</span>
+
+        <span class="nav-text">
+            Products
+        </span>
+
+    </div>
+
+
+    <div class="nav-item"
+         onclick="goTo('stock')">
+
+        <span>↕</span>
+
+        <span class="nav-text">
+            Stock Movement
+        </span>
+
+    </div>
+
+
+    <div class="nav-item"
+         onclick="goTo('alerts')">
+
+        <span>!</span>
+
+        <span class="nav-text">
+            Reorder Alerts
+        </span>
+
+    </div>
+
+
+    <div class="nav-item"
+         onclick="goTo('analytics')">
+
+        <span>↗</span>
+
+        <span class="nav-text">
+            Analytics
+        </span>
+
+    </div>
+
+</aside>
+
+
+<!-- ==========================================
+     MAIN
+=========================================== -->
+
+<main class="main">
+
+
+    <!-- TOP BAR -->
+
+    <header class="topbar">
+
+        <div>
+
+            <h2>
+                Inventory Dashboard
+            </h2>
+
+            <p>
+                Retail Store Inventory Management
+            </p>
+
+        </div>
+
+
+        <div class="online">
+            ● System Online
+        </div>
+
+    </header>
+
+
+    <div class="content">
+
+
+        <!-- MESSAGE -->
+
+        <div id="message"
+             class="message">
+        </div>
+
+
+        <!-- =====================================
+             DASHBOARD
+        ====================================== -->
+
+        <section id="dashboard">
+
+
+            <!-- STAT CARDS -->
+
+            <div class="stats">
+
+
+                <div class="stat-card">
+
+                    <div>
+
+                        <p>
+                            Total Products
+                        </p>
+
+                        <h3 id="totalProducts">
+                            0
+                        </h3>
+
+                    </div>
+
+                    <div class="stat-icon blue">
+                        ▣
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div>
+
+                        <p>
+                            Total Stock
+                        </p>
+
+                        <h3 id="totalStock">
+                            0
+                        </h3>
+
+                    </div>
+
+                    <div class="stat-icon green">
+                        ↕
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div>
+
+                        <p>
+                            Low Stock
+                        </p>
+
+                        <h3 id="lowStock">
+                            0
+                        </h3>
+
+                    </div>
+
+                    <div class="stat-icon orange">
+                        !
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div>
+
+                        <p>
+                            Open Alerts
+                        </p>
+
+                        <h3 id="openAlerts">
+                            0
+                        </h3>
+
+                    </div>
+
+                    <div class="stat-icon purple">
+                        ⚠
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- INVENTORY VALUE -->
+
+            <div class="card">
+
+                <div class="inventory-value">
+
+                    <p>
+                        ESTIMATED TOTAL INVENTORY VALUE
+                    </p>
+
+                    <h2 id="inventoryValue">
+                        ₹0.00
+                    </h2>
+
+                    <p style="margin-top:8px;">
+                        Current Stock × Product Price
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- QUICK STOCK -->
+
+            <div class="card">
+
+
+                <div class="card-header">
+
+                    <div>
+
+                        <div class="card-title">
+                            Quick Stock Check
+                        </div>
+
+                        <div class="card-subtitle">
+                            Check real-time stock for any product
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="grid-2">
+
+
+                    <div>
+
+                        <div class="form-group">
+
+                            <label>
+                                Product ID
+                            </label>
+
+                            <input
+                                    id="stockProductId"
+                                    type="number"
+                                    placeholder="Enter Product ID">
+
+                        </div>
+
+
+                        <div class="button-row">
+
+                            <button
+                                    class="btn primary"
+                                    onclick="checkStock()">
+
+                                Check Stock
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="stock-box">
+
+                        <p>
+                            CURRENT STOCK
+                        </p>
+
+                        <div
+                                id="stockResult"
+                                class="stock-number">
+
+                            -
+
+                        </div>
+
+                        <p>
+                            units available
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =====================================
+             PRODUCTS
+        ====================================== -->
+
+        <section id="products">
+
+
+            <!-- ADD PRODUCT -->
+
+            <div class="card">
+
+
+                <div class="card-header">
+
+                    <div>
+
+                        <div class="card-title">
+                            Add Product
+                        </div>
+
+                        <div class="card-subtitle">
+                            Register a new product
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Product Name
+                        </label>
+
+                        <input
+                                id="name"
+                                type="text"
+                                placeholder="Example: Rice">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Description
+                        </label>
+
+                        <input
+                                id="description"
+                                type="text"
+                                placeholder="Product description">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Price
+                        </label>
+
+                        <input
+                                id="price"
+                                type="number"
+                                placeholder="Price">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Reorder Threshold
+                        </label>
+
+                        <input
+                                id="threshold"
+                                type="number"
+                                placeholder="Example: 10">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Reorder Quantity
+                        </label>
+
+                        <input
+                                id="quantity"
+                                type="number"
+                                placeholder="Example: 50">
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="button-row">
+
+                    <button
+                            class="btn primary"
+                            onclick="addProduct()">
+
+                        + Add Product
+
+                    </button>
+
+                    <button
+                            class="btn light"
+                            onclick="clearProductForm()">
+
+                        Clear
+
+                    </button>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- PRODUCT TABLE -->
+
+            <div class="card">
+
+
+                <div class="card-header">
+
+                    <div>
+
+                        <div class="card-title">
+                            Product Inventory
+                        </div>
+
+                        <div class="card-subtitle">
+                            Manage all products
+                        </div>
+
+                    </div>
+
+
+                    <input
+                            id="productSearch"
+                            class="search"
+                            type="text"
+                            placeholder="Search product..."
+                            onkeyup="filterProducts()">
+
+                </div>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Threshold</th>
+                            <th>Reorder Qty</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+
+                        </tr>
+
+                        </thead>
+
+
+                        <tbody id="productTable">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =====================================
+             STOCK MOVEMENT
+        ====================================== -->
+
+        <section id="stock">
+
+
+            <div class="card">
+
+
+                <div class="card-header">
+
+                    <div>
+
+                        <div class="card-title">
+                            Stock Movement
+                        </div>
+
+                        <div class="card-subtitle">
+                            Record IN and OUT inventory transactions
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Product ID
+                        </label>
+
+                        <input
+                                id="movementProductId"
+                                type="number"
+                                placeholder="Product ID">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Movement Type
+                        </label>
+
+                        <select id="movementType">
+
+                            <option value="IN">
+                                STOCK IN
+                            </option>
+
+                            <option value="OUT">
+                                STOCK OUT
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Reason
+                        </label>
+
+                        <select id="movementReason">
+
+                            <option value="PURCHASE">
+                                PURCHASE
+                            </option>
+
+                            <option value="SALE">
+                                SALE
+                            </option>
+
+                            <option value="RETURN">
+                                RETURN
+                            </option>
+
+                            <option value="DAMAGE">
+                                DAMAGE
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Quantity
+                        </label>
+
+                        <input
+                                id="movementQuantity"
+                                type="number"
+                                min="1"
+                                placeholder="Quantity">
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="button-row">
+
+                    <button
+                            class="btn success-btn"
+                            onclick="addMovement()">
+
+                        Record Movement
+
+                    </button>
+
+                    <button
+                            class="btn light"
+                            onclick="clearMovementForm()">
+
+                        Clear
+
+                    </button>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- MOVEMENT HISTORY -->
+
+            <div class="card">
+
+
+                <div class="card-header">
+
+                    <div>
+
+                        <div class="card-title">
+                            Movement History
+                        </div>
+
+                        <div class="card-subtitle">
+                            Product transaction history
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>
+                            Product ID
+                        </label>
+
+                        <input
+                                id="historyProductId"
+                                type="number"
+                                placeholder="Product ID">
+
+                    </div>
+
+                </div>
+
+
+                <div class="button-row">
+
+                    <button
+                            class="btn dark"
+                            onclick="loadMovements()">
+
+                        View History
+
+                    </button>
+
+                </div>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>Type</th>
+                            <th>Reason</th>
+                            <th>Quantity</th>
+                            <th>Date</th>
+
+                        </tr>
+
+                        </thead>
+
+
+                        <tbody
+                                id="movementTable">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =====================================
+             ALERTS
+        ====================================== -->
+
+        <section id="alerts">
+
+
+            <div class="card">
+
+
+                <div class="card-header">
+
+                    <div>
+
+                        <div class="card-title">
+                            Reorder Alerts
+                        </div>
+
+                        <div class="card-subtitle">
+                            Products requiring restocking
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>
+                            Product ID
+                        </label>
+
+                        <input
+                                id="alertProductId"
+                                type="number"
+                                placeholder="Product ID">
+
+                    </div>
+
+                </div>
+
+
+                <div class="button-row">
+
+                    <button
+                            class="btn warning"
+                            onclick="loadAlerts()">
+
+                        View Alerts
+
+                    </button>
+
+                </div>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>Current Stock</th>
+                            <th>Threshold</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Fulfilled</th>
+
+                        </tr>
+
+                        </thead>
+
+
+                        <tbody
+                                id="alertTable">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =====================================
+             ANALYTICS
+        ====================================== -->
+
+        <section id="analytics">
+
+
+            <div class="card">
+
+
+                <div class="card-header">
+
+                    <div>
+
+                        <div class="card-title">
+                            Fast-Moving Products
+                        </div>
+
+                        <div class="card-subtitle">
+                            Products with highest sales volume
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Start Date & Time
+                        </label>
+
+                        <input
+                                id="startDate"
+                                type="datetime-local">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            End Date & Time
+                        </label>
+
+                        <input
+                                id="endDate"
+                                type="datetime-local">
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="button-row">
+
+                    <button
+                            class="btn primary"
+                            onclick="loadFastMoving()">
+
+                        Analyze Sales
+
+                    </button>
+
+                </div>
+
+
+                <div class="table-container">
+
+                    <table>
+
+                        <thead>
+
+                        <tr>
+
+                            <th>Rank</th>
+                            <th>Product ID</th>
+                            <th>Product Name</th>
+                            <th>Sales Volume</th>
+
+                        </tr>
+
+                        </thead>
+
+
+                        <tbody
+                                id="fastTable">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <footer>
+
+            StockAlert | Retail Inventory Management System
+
+            <br>
+
+            Spring Boot + MySQL + REST API
+
+        </footer>
+
+
+    </div>
+
+</main>
+
+
+<!-- ==========================================
+     EDIT PRODUCT MODAL
+=========================================== -->
+
+<div
+        id="editModal"
+        class="modal">
+
+
+    <div class="modal-content">
+
+
+        <div class="modal-header">
+
+            <h2>
+                Edit Product
+            </h2>
+
+            <button
+                    class="close"
+                    onclick="closeEditModal()">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <input
+                id="editId"
+                type="hidden">
+
+
+        <div class="form-grid">
+
+
+            <div class="form-group">
+
+                <label>
+                    Product Name
+                </label>
+
+                <input
+                        id="editName"
+                        type="text">
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Description
+                </label>
+
+                <input
+                        id="editDescription"
+                        type="text">
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Price
+                </label>
+
+                <input
+                        id="editPrice"
+                        type="number">
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Reorder Threshold
+                </label>
+
+                <input
+                        id="editThreshold"
+                        type="number">
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Reorder Quantity
+                </label>
+
+                <input
+                        id="editQuantity"
+                        type="number">
+
+            </div>
+
+
+        </div>
+
+
+        <div class="button-row">
+
+            <button
+                    class="btn primary"
+                    onclick="updateProduct()">
+
+                Save Changes
+
+            </button>
+
+            <button
+                    class="btn light"
+                    onclick="closeEditModal()">
+
+                Cancel
+
+            </button>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+    // =================================================
+    // GLOBAL DATA
+    // =================================================
+
+    let allProducts = [];
+
+
+    // =================================================
+    // MESSAGE
+    // =================================================
+
+    function showMessage(text, type) {
+
+        const message =
+            document.getElementById("message");
+
+        message.innerText = text;
+
+        message.className =
+            "message " + type;
+
+        message.style.display = "block";
+
+
+        setTimeout(function () {
+
+            message.style.display = "none";
+
+        }, 3500);
+    }
+
+
+    // =================================================
+    // NAVIGATION
+    // =================================================
+
+    function goTo(id) {
+
+        document.getElementById(id)
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+
+    }
+
+
+    // =================================================
+    // ADD PRODUCT
+    // =================================================
+
+    function addProduct() {
+
+        const product = {
+
+            name:
+                document.getElementById("name")
+                    .value.trim(),
+
+            description:
+                document.getElementById("description")
+                    .value.trim(),
+
+            price:
+                Number(
+                    document.getElementById("price")
+                        .value
+                ),
+
+            reorderThreshold:
+                Number(
+                    document.getElementById("threshold")
+                        .value
+                ),
+
+            reorderQuantity:
+                Number(
+                    document.getElementById("quantity")
+                        .value
+                )
+
+        };
+
+
+        if (!product.name) {
+
+            showMessage(
+                "Enter product name",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (product.price <= 0) {
+
+            showMessage(
+                "Enter valid price",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (product.reorderThreshold < 0) {
+
+            showMessage(
+                "Enter valid threshold",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (product.reorderQuantity <= 0) {
+
+            showMessage(
+                "Enter valid reorder quantity",
+                "error"
+            );
+
+            return;
+        }
+
+
+        fetch("/api/products", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type":
+                    "application/json"
+            },
+
+            body:
+                JSON.stringify(product)
+
+        })
+
+            .then(response => {
+
+                if (!response.ok) {
+
+                    throw new Error();
+
+                }
+
+                return response.json();
+
+            })
+
+            .then(() => {
+
+                showMessage(
+                    "Product added successfully",
+                    "success"
+                );
+
+                clearProductForm();
+
+                loadProducts();
+
+            })
+
+            .catch(() => {
+
+                showMessage(
+                    "Error adding product",
+                    "error"
+                );
+
+            });
+
+    }
+
+
+    // =================================================
+    // CLEAR PRODUCT
+    // =================================================
+
+    function clearProductForm() {
+
+        document.getElementById("name").value = "";
+
+        document.getElementById("description").value = "";
+
+        document.getElementById("price").value = "";
+
+        document.getElementById("threshold").value = "";
+
+        document.getElementById("quantity").value = "";
+
+    }
+
+
+    // =================================================
+    // LOAD PRODUCTS
+    // =================================================
+
+    function loadProducts() {
+
+        fetch("/api/products")
+
+            .then(response => {
+
+                if (!response.ok) {
+
+                    throw new Error();
+
+                }
+
+                return response.json();
+
+            })
+
+            .then(products => {
+
+                allProducts = products;
+
+                document.getElementById(
+                    "totalProducts"
+                ).innerText =
+                    products.length;
+
+
+                displayProducts(products);
+
+                calculateDashboard(products);
+
+            })
+
+            .catch(() => {
+
+                showMessage(
+                    "Unable to load products",
+                    "error"
+                );
+
+            });
+
+    }
+
+
+    // =================================================
+    // DISPLAY PRODUCTS
+    // =================================================
+
+    function displayProducts(products) {
+
+        const table =
+            document.getElementById(
+                "productTable"
+            );
+
+
+        table.innerHTML = "";
+
+
+        if (products.length === 0) {
+
+            table.innerHTML = `
+
+            <tr>
+
+                <td colspan="8"
+                    class="empty">
+
+                    No products found
+
+                </td>
+
+            </tr>
+
+        `;
+
+            return;
+
+        }
+
+
+        products.forEach(product => {
+
+            table.innerHTML += `
+
+            <tr>
+
+                <td>
+                    #${product.id}
+                </td>
+
+                <td>
+                    <strong>
+                        ${product.name}
+                    </strong>
+                </td>
+
+                <td>
+                    ₹${Number(product.price).toFixed(2)}
+                </td>
+
+                <td>
+                    ${product.reorderThreshold}
+                </td>
+
+                <td>
+                    ${product.reorderQuantity}
+                </td>
+
+                <td id="stock-${product.id}">
+                    Loading...
+                </td>
+
+                <td id="status-${product.id}">
+                    Loading...
+                </td>
+
+                <td>
+
+                    <button
+                        class="btn primary"
+                        onclick="openEditModal(
+                            ${product.id}
+                        )">
+
+                        Edit
+
+                    </button>
+
+                    <button
+                        class="btn danger"
+                        onclick="deleteProduct(
+                            ${product.id}
+                        )">
+
+                        Delete
+
+                    </button>
+
+                </td>
+
+            </tr>
+
+        `;
+
+
+            loadProductStock(product);
+
+        });
+
+    }
+
+
+    // =================================================
+    // LOAD STOCK FOR PRODUCT
+    // =================================================
+
+    function loadProductStock(product) {
+
+        fetch(
+            "/api/stock-movements/"
+            + product.id
+            + "/stock"
+        )
+
+            .then(response =>
+                response.json()
+            )
+
+            .then(data => {
+
+                const stock =
+                    data.currentStock;
+
+
+                const stockCell =
+                    document.getElementById(
+                        "stock-" + product.id
+                    );
+
+                const statusCell =
+                    document.getElementById(
+                        "status-" + product.id
+                    );
+
+
+                if (stockCell) {
+
+                    stockCell.innerText =
+                        stock;
+
+                }
+
+
+                if (statusCell) {
+
+                    if (
+                        stock <=
+                        product.reorderThreshold
+                    ) {
+
+                        statusCell.innerHTML = `
+
+                    <span class="badge badge-low">
+                        LOW STOCK
+                    </span>
+
+                `;
+
+                    } else {
+
+                        statusCell.innerHTML = `
+
+                    <span class="badge badge-normal">
+                        NORMAL
+                    </span>
+
+                `;
+
+                    }
+
+                }
+
+            })
+
+            .catch(() => {
+
+                const cell =
+                    document.getElementById(
+                        "stock-" + product.id
+                    );
+
+                if (cell) {
+
+                    cell.innerText = "-";
+
+                }
+
+            });
+
+    }
+
+
+    // =================================================
+    // DASHBOARD CALCULATIONS
+    // =================================================
+
+    function calculateDashboard(products) {
+
+        let totalValue = 0;
+
+        let stockRequests = [];
+
+        let lowStockCount = 0;
+
+
+        products.forEach(product => {
+
+            stockRequests.push(
+
+                fetch(
+                    "/api/stock-movements/"
+                    + product.id
+                    + "/stock"
+                )
+                    .then(response =>
+                        response.json()
+                    )
+                    .then(data => {
+
+                        const stock =
+                            data.currentStock;
+
+
+                        if (
+                            stock <=
+                            product.reorderThreshold
+                        ) {
+
+                            lowStockCount++;
+
+                        }
+
+
+                        totalValue +=
+                            stock *
+                            Number(product.price);
+
+                    })
+
+            );
+
+        });
+
+
+        Promise.all(stockRequests)
+
+            .then(() => {
+
+                document.getElementById(
+                    "lowStock"
+                ).innerText =
+                    lowStockCount;
+
+
+                document.getElementById(
+                    "inventoryValue"
+                ).innerText =
+                    "₹"
+                    + totalValue.toFixed(2);
+
+
+                calculateTotalStock();
+
+            });
+
+    }
+
+
+    // =================================================
+    // TOTAL STOCK
+    // =================================================
+
+    function calculateTotalStock() {
+
+        let total = 0;
+
+        const requests =
+            allProducts.map(product =>
+
+                fetch(
+                    "/api/stock-movements/"
+                    + product.id
+                    + "/stock"
+                )
+                    .then(response =>
+                        response.json()
+                    )
+                    .then(data => {
+
+                        total +=
+                            Number(
+                                data.currentStock
+                            );
+
+                    })
+
+            );
+
+
+        Promise.all(requests)
+
+            .then(() => {
+
+                document.getElementById(
+                    "totalStock"
+                ).innerText =
+                    total;
+
+            });
+
+    }
+
+
+    // =================================================
+    // SEARCH
+    // =================================================
+
+    function filterProducts() {
+
+        const search =
+            document.getElementById(
+                "productSearch"
+            ).value
+                .toLowerCase();
+
+
+        const filtered =
+            allProducts.filter(product =>
+
+                product.name
+                    .toLowerCase()
+                    .includes(search)
+
+            );
+
+
+        displayProducts(filtered);
+
+    }
+
+
+    // =================================================
+    // EDIT PRODUCT
+    // =================================================
+
+    function openEditModal(id) {
+
+        const product =
+            allProducts.find(
+                p => p.id === id
+            );
+
+
+        if (!product) {
+            return;
+        }
+
+
+        document.getElementById(
+            "editId"
+        ).value =
+            product.id;
+
+
+        document.getElementById(
+            "editName"
+        ).value =
+            product.name;
+
+
+        document.getElementById(
+            "editDescription"
+        ).value =
+            product.description || "";
+
+
+        document.getElementById(
+            "editPrice"
+        ).value =
+            product.price;
+
+
+        document.getElementById(
+            "editThreshold"
+        ).value =
+            product.reorderThreshold;
+
+
+        document.getElementById(
+            "editQuantity"
+        ).value =
+            product.reorderQuantity;
+
+
+        document.getElementById(
+            "editModal"
+        ).style.display =
+            "flex";
+
+    }
+
+
+    // =================================================
+    // CLOSE EDIT
+    // =================================================
+
+    function closeEditModal() {
+
+        document.getElementById(
+            "editModal"
+        ).style.display =
+            "none";
+
+    }
+
+
+    // =================================================
+    // UPDATE PRODUCT
+    // =================================================
+
+    function updateProduct() {
+
+        const id =
+            document.getElementById(
+                "editId"
+            ).value;
+
+
+        const product = {
+
+            name:
+            document.getElementById(
+                "editName"
+            ).value,
+
+            description:
+            document.getElementById(
+                "editDescription"
+            ).value,
+
+            price:
+                Number(
+                    document.getElementById(
+                        "editPrice"
+                    ).value
+                ),
+
+            reorderThreshold:
+                Number(
+                    document.getElementById(
+                        "editThreshold"
+                    ).value
+                ),
+
+            reorderQuantity:
+                Number(
+                    document.getElementById(
+                        "editQuantity"
+                    ).value
+                )
+
+        };
+
+
+        fetch(
+            "/api/products/" + id,
+            {
+
+                method: "PUT",
+
+                headers: {
+
+                    "Content-Type":
+                        "application/json"
+
+                },
+
+                body:
+                    JSON.stringify(product)
+
+            }
+        )
+
+            .then(response => {
+
+                if (!response.ok) {
+
+                    throw new Error();
+
+                }
+
+                return response.json();
+
+            })
+
+            .then(() => {
+
+                closeEditModal();
+
+                showMessage(
+                    "Product updated successfully",
+                    "success"
+                );
+
+                loadProducts();
+
+            })
+
+            .catch(() => {
+
+                showMessage(
+                    "Error updating product",
+                    "error"
+                );
+
+            });
+
+    }
+
+
+    // =================================================
+    // DELETE PRODUCT
+    // =================================================
+
+    function deleteProduct(id) {
+
+        const confirmDelete =
+            confirm(
+                "Are you sure you want to delete this product?"
+            );
+
+
+        if (!confirmDelete) {
+            return;
+        }
+
+
+        fetch(
+            "/api/products/" + id,
+            {
+
+                method: "DELETE"
+
+            }
+        )
+
+            .then(response => {
+
+                if (!response.ok) {
+
+                    throw new Error();
+
+                }
+
+            })
+
+            .then(() => {
+
+                showMessage(
+                    "Product deleted successfully",
+                    "success"
+                );
+
+                loadProducts();
+
+            })
+
+            .catch(() => {
+
+                showMessage(
+                    "Unable to delete product. It may have stock movements.",
+                    "error"
+                );
+
+            });
+
+    }
+
+
+    // =================================================
+    // STOCK MOVEMENT
+    // =================================================
+
+    function addMovement() {
+
+        const productId =
+            document.getElementById(
+                "movementProductId"
+            ).value;
+
+
+        const movementType =
+            document.getElementById(
+                "movementType"
+            ).value;
+
+
+        const reason =
+            document.getElementById(
+                "movementReason"
+            ).value;
+
+
+        const quantity =
+            Number(
+                document.getElementById(
+                    "movementQuantity"
+                ).value
+            );
+
+
+        if (!productId) {
+
+            showMessage(
+                "Enter Product ID",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (quantity <= 0) {
+
+            showMessage(
+                "Quantity must be greater than zero",
+                "error"
+            );
+
+            return;
+        }
+
+
+        const movement = {
+
+            movementType:
+            movementType,
+
+            reason:
+            reason,
+
+            quantity:
+            quantity
+
+        };
+
+
+        fetch(
+            "/api/stock-movements/"
+            + productId,
+            {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify(movement)
+
+            }
+        )
+
+            .then(async response => {
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message ||
+                        "Movement failed"
+                    );
+
+                }
+
+
+                return data;
+
+            })
+
+            .then(() => {
+
+                showMessage(
+                    "Stock movement recorded successfully",
+                    "success"
+                );
+
+
+                clearMovementForm();
+
+                loadProducts();
+
+            })
+
+            .catch(error => {
+
+                showMessage(
+                    error.message ||
+                    "Error recording movement",
+                    "error"
+                );
+
+            });
+
+    }
+
+
+    // =================================================
+    // CLEAR MOVEMENT
+    // =================================================
+
+    function clearMovementForm() {
+
+        document.getElementById(
+            "movementProductId"
+        ).value = "";
+
+        document.getElementById(
+            "movementQuantity"
+        ).value = "";
+
+    }
+
+
+    // =================================================
+    // CHECK STOCK
+    // =================================================
+
+    function checkStock() {
+
+        const id =
+            document.getElementById(
+                "stockProductId"
+            ).value;
+
+
+        if (!id) {
+
+            showMessage(
+                "Enter Product ID",
+                "error"
+            );
+
+            return;
+        }
+
+
+        fetch(
+            "/api/stock-movements/"
+            + id
+            + "/stock"
+        )
+
+            .then(response =>
+                response.json()
+            )
+
+            .then(data => {
+
+                document.getElementById(
+                    "stockResult"
+                ).innerText =
+                    data.currentStock;
+
+            })
+
+            .catch(() => {
+
+                showMessage(
+                    "Unable to get stock",
+                    "error"
+                );
+
+            });
+
+    }
+
+
+    // =================================================
+    // MOVEMENT HISTORY
+    // =================================================
+
+    function loadMovements() {
+
+        const id =
+            document.getElementById(
+                "historyProductId"
+            ).value;
+
+
+        if (!id) {
+
+            showMessage(
+                "Enter Product ID",
+                "error"
+            );
+
+            return;
+        }
+
+
+        fetch(
+            "/api/stock-movements/"
+            + id
+        )
+
+            .then(response =>
+                response.json()
+            )
+
+            .then(movements => {
+
+                const table =
+                    document.getElementById(
+                        "movementTable"
+                    );
+
+
+                table.innerHTML = "";
+
+
+                if (movements.length === 0) {
+
+                    table.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="5"
+                        class="empty">
+
+                        No movement history
+
+                    </td>
+
+                </tr>
+
+            `;
+
+                    return;
+
+                }
+
+
+                movements.forEach(movement => {
+
+                    const badge =
+                        movement.movementType === "IN"
+                            ? "badge-in"
+                            : "badge-out";
+
+
+                    table.innerHTML += `
+
+                <tr>
+
+                    <td>
+                        #${movement.id}
+                    </td>
+
+                    <td>
+
+                        <span
+                            class="badge ${badge}">
+
+                            ${movement.movementType}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+                        ${movement.reason}
+                    </td>
+
+                    <td>
+                        ${movement.quantity}
+                    </td>
+
+                    <td>
+                        ${formatDate(
+                        movement.movementDate
+                    )}
+                    </td>
+
+                </tr>
+
+            `;
+
+                });
+
+            })
+
+            .catch(() => {
+
+                showMessage(
+                    "Unable to load history",
+                    "error"
+                );
+
+            });
+
+    }
+
+
+    // =================================================
+    // ALERTS
+    // =================================================
+
+    function loadAlerts() {
+
+        const id =
+            document.getElementById(
+                "alertProductId"
+            ).value;
+
+
+        if (!id) {
+
+            showMessage(
+                "Enter Product ID",
+                "error"
+            );
+
+            return;
+        }
+
+
+        fetch(
+            "/api/reorder-alerts/"
+            + id
+        )
+
+            .then(response =>
+                response.json()
+            )
+
+            .then(alerts => {
+
+                const table =
+                    document.getElementById(
+                        "alertTable"
+                    );
+
+
+                table.innerHTML = "";
+
+
+                let open = 0;
+
+
+                if (alerts.length === 0) {
+
+                    table.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="empty">
+
+                        No reorder alerts
+
+                    </td>
+
+                </tr>
+
+            `;
+
+                }
+
+
+                alerts.forEach(alert => {
+
+                    if (alert.status === "OPEN") {
+                        open++;
+                    }
+
+
+                    const badge =
+                        alert.status === "OPEN"
+                            ? "badge-open"
+                            : "badge-fulfilled";
+
+
+                    table.innerHTML += `
+
+                <tr>
+
+                    <td>
+                        #${alert.id}
+                    </td>
+
+                    <td>
+                        ${alert.currentStock}
+                    </td>
+
+                    <td>
+                        ${alert.threshold}
+                    </td>
+
+                    <td>
+
+                        <span
+                            class="badge ${badge}">
+
+                            ${alert.status}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+                        ${formatDate(
+                        alert.createdAt
+                    )}
+                    </td>
+
+                    <td>
+                        ${
+                        alert.fulfilledAt
+                            ? formatDate(
+                                alert.fulfilledAt
+                            )
+                            : "-"
+                    }
+                    </td>
+
+                </tr>
+
+            `;
+
+                });
+
+
+                document.getElementById(
+                    "openAlerts"
+                ).innerText =
+                    open;
+
+            })
+
+            .catch(() => {
+
+                showMessage(
+                    "Unable to load alerts",
+                    "error"
+                );
+
+            });
+
+    }
+
+
+    // =================================================
+    // FAST MOVING
+    // =================================================
+
+    function loadFastMoving() {
+
+        const start =
+            document.getElementById(
+                "startDate"
+            ).value;
+
+
+        const end =
+            document.getElementById(
+                "endDate"
+            ).value;
+
+
+        if (!start || !end) {
+
+            showMessage(
+                "Select start and end date",
+                "error"
+            );
+
+            return;
+        }
+
+
+        fetch(
+            "/api/fast-moving"
+            + "?startDate="
+            + encodeURIComponent(start)
+            + "&endDate="
+            + encodeURIComponent(end)
+        )
+
+            .then(response =>
+                response.json()
+            )
+
+            .then(products => {
+
+                const table =
+                    document.getElementById(
+                        "fastTable"
+                    );
+
+
+                table.innerHTML = "";
+
+
+                if (products.length === 0) {
+
+                    table.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="4"
+                        class="empty">
+
+                        No sales found
+
+                    </td>
+
+                </tr>
+
+            `;
+
+                    return;
+
+                }
+
+
+                products.forEach(
+                    (product, index) => {
+
+                        table.innerHTML += `
+
+                    <tr>
+
+                        <td>
+                            #${index + 1}
+                        </td>
+
+                        <td>
+                            #${product.productId}
+                        </td>
+
+                        <td>
+                            <strong>
+                                ${product.productName}
+                            </strong>
+                        </td>
+
+                        <td>
+
+                            <span
+                                class="badge badge-in">
+
+                                ${product.salesVolume}
+                                units
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+                    }
+                );
+
+            })
+
+            .catch(() => {
+
+                showMessage(
+                    "Unable to load analytics",
+                    "error"
+                );
+
+            });
+
+    }
+
+
+    // =================================================
+    // DATE FORMAT
+    // =================================================
+
+    function formatDate(value) {
+
+        if (!value) {
+            return "-";
+        }
+
+
+        try {
+
+            return new Date(value)
+                .toLocaleString();
+
+        }
+
+        catch {
+
+            return value;
+
+        }
+
+    }
+
+
+    // =================================================
+    // DEFAULT DATES
+    // =================================================
+
+    function setDefaultDates() {
+
+        const now =
+            new Date();
+
+
+        const old =
+            new Date();
+
+
+        old.setDate(
+            now.getDate() - 30
+        );
+
+
+        function format(date) {
+
+            const y =
+                date.getFullYear();
+
+            const m =
+                String(
+                    date.getMonth() + 1
+                ).padStart(2, "0");
+
+            const d =
+                String(
+                    date.getDate()
+                ).padStart(2, "0");
+
+            const h =
+                String(
+                    date.getHours()
+                ).padStart(2, "0");
+
+            const min =
+                String(
+                    date.getMinutes()
+                ).padStart(2, "0");
+
+
+            return y
+                + "-"
+                + m
+                + "-"
+                + d
+                + "T"
+                + h
+                + ":"
+                + min;
+
+        }
+
+
+        document.getElementById(
+            "startDate"
+        ).value =
+            format(old);
+
+
+        document.getElementById(
+            "endDate"
+        ).value =
+            format(now);
+
+    }
+
+
+    // =================================================
+    // PAGE LOAD
+    // =================================================
+
+    window.onload = function () {
+
+        loadProducts();
+
+        setDefaultDates();
+
+    };
+
+</script>
+
+
+</body>
+
+</html>

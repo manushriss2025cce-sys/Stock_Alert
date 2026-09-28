@@ -29,14 +29,19 @@ public class ProductService {
     }
 
     public Product updateProduct(Long id, Product product) {
-        Product existingProduct = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        Product existingProduct =
+                productRepository.findById(id)
+                        .orElseThrow(() ->
+                                new RuntimeException("Product not found"));
 
         existingProduct.setName(product.getName());
         existingProduct.setDescription(product.getDescription());
         existingProduct.setPrice(product.getPrice());
-        existingProduct.setReorderThreshold(product.getReorderThreshold());
-        existingProduct.setReorderQuantity(product.getReorderQuantity());
+        existingProduct.setReorderThreshold(
+                product.getReorderThreshold());
+        existingProduct.setReorderQuantity(
+                product.getReorderQuantity());
 
         return productRepository.save(existingProduct);
     }
